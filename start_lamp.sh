@@ -1,0 +1,1 @@
+sudo java -Dpi4j.linking=dynamic -jar ./wakeup_lamp-0.1.0.jar

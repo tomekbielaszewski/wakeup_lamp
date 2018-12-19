@@ -30,6 +30,7 @@ public class Starter {
             .dimDelay(Duration.ofMinutes(30))
             .dimDuration(Duration.ofMinutes(5))
             .build();
+    private static final int BLINK_REPEATS = 3;
 
     public static void main(String[] args) {
         RaspberryPi raspberryPi = SpringApplication.run(Starter.class)
@@ -45,13 +46,15 @@ public class Starter {
     }
 
     private static void welcomeBlink(RaspberryPi raspberryPi) {
-        for (int i = 0; i <= RaspberryPi.MAX_PWM_RATE; i++) {
-            raspberryPi.setPWM(i);
-            sleep();
-        }
-        for (int i = RaspberryPi.MAX_PWM_RATE; i > 0; i--) {
-            raspberryPi.setPWM(i);
-            sleep();
+        for (int b = 0; b <= BLINK_REPEATS; b++) {
+            for (int i = 0; i <= RaspberryPi.MAX_PWM_RATE; i++) {
+                raspberryPi.setPWM(i);
+                sleep();
+            }
+            for (int i = RaspberryPi.MAX_PWM_RATE; i > 0; i--) {
+                raspberryPi.setPWM(i);
+                sleep();
+            }
         }
     }
 

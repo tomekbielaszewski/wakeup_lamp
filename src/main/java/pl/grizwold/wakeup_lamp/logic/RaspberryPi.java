@@ -11,25 +11,25 @@ import org.springframework.stereotype.Component;
 public class RaspberryPi {
     public static final int MAX_PWM_RATE = 1024;
 
-//    private final GpioPinPwmOutput pwm;
+    private final GpioPinPwmOutput pwm;
 
     public RaspberryPi() {
-//        final GpioController gpio = GpioFactory.getInstance();
-//        Pin pin = CommandArgumentParser.getPin(
-//                RaspiPin.class,
-//                RaspiPin.GPIO_01);
-//        this.pwm = gpio.provisionPwmOutputPin(pin);
-//        Gpio.pwmSetMode(Gpio.PWM_MODE_BAL);
-//        this.pwm.setPwm(0);
-//
-//        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-//            pwm.setPwm(0);
-//            gpio.shutdown();
-//        }));
+        final GpioController gpio = GpioFactory.getInstance();
+        Pin pin = CommandArgumentParser.getPin(
+                RaspiPin.class,
+                RaspiPin.GPIO_01);
+        this.pwm = gpio.provisionPwmOutputPin(pin);
+        Gpio.pwmSetMode(Gpio.PWM_MODE_BAL);
+        this.pwm.setPwm(0);
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            pwm.setPwm(0);
+            gpio.shutdown();
+        }));
     }
 
     public void setPWM(int rate) {
-//        this.pwm.setPwm(rate);
+        this.pwm.setPwm(rate);
         log.info("PWM rate is: {}", rate);
     }
 }

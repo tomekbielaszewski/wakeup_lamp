@@ -51,7 +51,7 @@ public class Starter {
                 raspberryPi.setPWM(i);
                 sleep();
             }
-            for (int i = RaspberryPi.MAX_PWM_RATE; i > 0; i--) {
+            for (int i = RaspberryPi.MAX_PWM_RATE; i >= 0; i--) {
                 raspberryPi.setPWM(i);
                 sleep();
             }

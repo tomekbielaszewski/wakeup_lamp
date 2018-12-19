@@ -33,6 +33,7 @@ public class Starter {
     private static final int BLINK_REPEATS = 3;
 
     public static void main(String[] args) {
+        preStartCleanup();
         RaspberryPi raspberryPi = SpringApplication.run(Starter.class)
                 .getBean(RaspberryPi.class);
         welcomeBlink(raspberryPi);
@@ -43,6 +44,10 @@ public class Starter {
         ObjectMapper mapper = new ObjectMapper();
         mapper.findAndRegisterModules();
         return mapper;
+    }
+
+    private static void preStartCleanup() {
+        new RaspberryPi().setPWM(0).shutdown();
     }
 
     private static void welcomeBlink(RaspberryPi raspberryPi) {

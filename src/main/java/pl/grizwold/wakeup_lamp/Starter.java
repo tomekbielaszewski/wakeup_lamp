@@ -1,17 +1,20 @@
 package pl.grizwold.wakeup_lamp;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import pl.grizwold.wakeup_lamp.logic.LampWorker;
+import pl.grizwold.wakeup_lamp.logic.RaspberryPi;
 import pl.grizwold.wakeup_lamp.model.WakeUpDay;
 import pl.grizwold.wakeup_lamp.model.WakeUpWeek;
 
 import java.time.Duration;
 import java.time.LocalTime;
 
+@Slf4j
 @EnableScheduling
 @SpringBootApplication
 public class Starter {
@@ -29,7 +32,9 @@ public class Starter {
             .build();
 
     public static void main(String[] args) {
-        SpringApplication.run(Starter.class).getBean(LampWorker.class);
+        RaspberryPi raspberryPi = SpringApplication.run(Starter.class)
+                .getBean(RaspberryPi.class);
+        welcomeBlink(raspberryPi);
     }
 
     @Bean
@@ -37,5 +42,21 @@ public class Starter {
         ObjectMapper mapper = new ObjectMapper();
         mapper.findAndRegisterModules();
         return mapper;
+    }
+
+    private static void welcomeBlink(RaspberryPi raspberryPi) {
+        for (int i = 0; i <= RaspberryPi.MAX_PWM_RATE; i++) {
+            raspberryPi.setPWM(i);
+            sleep();
+        }
+        for (int i = RaspberryPi.MAX_PWM_RATE; i > 0; i--) {
+            raspberryPi.setPWM(i);
+            sleep();
+        }
+    }
+
+    @SneakyThrows
+    private static void sleep() {
+        Thread.sleep(1);
     }
 }

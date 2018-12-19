@@ -1,0 +1,109 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Lamp",
+		"_postman_id": "a1772806-5609-021f-53a4-2a5694febb85",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "get time",
+			"request": {
+				"url": "{{url}}/time",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "get logs",
+			"request": {
+				"url": "{{url}}/actuator/logfile",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "get wake up week config",
+			"request": {
+				"url": "{{url}}/wakeup",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "overwrite PWM",
+			"request": {
+				"url": "{{url}}/wakeup/0",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "update wake up week config",
+			"request": {
+				"url": "{{url}}/wakeup",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"workDay\": {\n        \"start\": \"01:10:00\",\n        \"end\": \"01:15:00\"\n    },\n    \"weekend\": {\n        \"start\": \"23:00:00\",\n        \"end\": \"23:59:00\"\n    },\n    \"dimDelay\": 1800,\n    \"dimDuration\": 300\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "set default wake up week config",
+			"request": {
+				"url": "{{url}}/wakeup/default",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "set system time",
+			"request": {
+				"url": "{{url}}/time",
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "2018-12-17 00:24:40"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

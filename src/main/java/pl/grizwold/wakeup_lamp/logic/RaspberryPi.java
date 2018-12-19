@@ -30,6 +30,5 @@ public class RaspberryPi {
 
     public void setPWM(int rate) {
         this.pwm.setPwm(rate);
-        log.info("PWM rate is: {}", rate);
     }
 }

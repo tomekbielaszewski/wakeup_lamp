@@ -28,7 +28,7 @@ public class RaspberryPi {
         }));
     }
 
-    public RaspberryPi setPWM(int rate) {
+    public RaspberryPi setPWM(Integer rate) {
         this.pwm.setPwm(rate);
         return this;
     }

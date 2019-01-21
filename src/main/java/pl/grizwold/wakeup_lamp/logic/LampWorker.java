@@ -65,7 +65,7 @@ public class LampWorker {
 
     private int calculateLightPower(LocalTime start, LocalTime end) {
         long secondsInTotal = SECONDS.between(start, end);
-        long secondsElapsed = SECONDS.between(start, LocalTime.now());
+        long secondsElapsed = SECONDS.between(start, time.now());
 
         return (int) (((float) secondsElapsed / (float) secondsInTotal) * MAX_PWM_RATE);
     }
@@ -78,8 +78,10 @@ public class LampWorker {
         return todayWakeUp.getEnd().plus(wakeUpService.getDimDelay());
     }
 
-    private boolean isBetween(LocalTime wakeUpStart, LocalTime wakeUpEnd) {
-        return time.now().isAfter(wakeUpStart) &&
-                time.now().isBefore(wakeUpEnd);
+    private boolean isBetween(LocalTime start, LocalTime end) {
+        LocalTime now = time.now();
+        return now.compareTo(start) == 0 ||
+                (now.isAfter(start) &&
+                        now.isBefore(end));
     }
 }

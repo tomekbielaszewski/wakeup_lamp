@@ -20,6 +20,9 @@ public class LampWorker {
     @Autowired
     private RaspberryPi raspberryPi;
 
+    @Autowired
+    private TimeService time;
+
     @Scheduled(fixedRate = 1000)
     public void scheduled() {
         WakeUpDay todayWakeUp = wakeUpService.getTodayWakeUpDay();
@@ -76,7 +79,7 @@ public class LampWorker {
     }
 
     private boolean isBetween(LocalTime wakeUpStart, LocalTime wakeUpEnd) {
-        return LocalTime.now().isAfter(wakeUpStart) &&
-                LocalTime.now().isBefore(wakeUpEnd);
+        return time.now().isAfter(wakeUpStart) &&
+                time.now().isBefore(wakeUpEnd);
     }
 }

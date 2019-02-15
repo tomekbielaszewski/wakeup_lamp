@@ -23,9 +23,7 @@ public class RaspberryPi {
         Gpio.pwmSetMode(Gpio.PWM_MODE_BAL);
         this.pwm.setPwm(0);
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            shutdown();
-        }));
+        Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
     }
 
     public RaspberryPi setPWM(Integer rate) {

@@ -2,7 +2,6 @@ package pl.grizwold.wakeup_lamp.logic;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -36,10 +35,9 @@ public class LampWorkerTest {
                 LocalTime.of(1, 0),
                 LocalTime.of(10, 0)
         );
-        dimDelay(Duration.ofSeconds(1));
-        dimDuration(Duration.ofSeconds(1));
-
-        now(LocalTime.of(0, 59));
+        setDimDelay(Duration.ofSeconds(1));
+        setDimDuration(Duration.ofSeconds(1));
+        setCurrentTime(LocalTime.of(0, 59));
 
         lampWorker.scheduled();
 
@@ -56,10 +54,9 @@ public class LampWorkerTest {
                 LocalTime.of(1, 0),
                 LocalTime.of(10, 0)
         );
-        dimDelay(Duration.ofSeconds(10));
-        dimDuration(Duration.ofSeconds(10));
-
-        now(LocalTime.of(1, 1));
+        setDimDelay(Duration.ofSeconds(10));
+        setDimDuration(Duration.ofSeconds(10));
+        setCurrentTime(LocalTime.of(1, 1));
 
         lampWorker.scheduled();
 
@@ -76,10 +73,9 @@ public class LampWorkerTest {
                 LocalTime.of(1, 0),
                 LocalTime.of(10, 0)
         );
-        dimDelay(Duration.ofSeconds(10));
-        dimDuration(Duration.ofSeconds(10));
-
-        now(LocalTime.of(9, 59));
+        setDimDelay(Duration.ofSeconds(10));
+        setDimDuration(Duration.ofSeconds(10));
+        setCurrentTime(LocalTime.of(9, 59));
 
         lampWorker.scheduled();
 
@@ -96,10 +92,9 @@ public class LampWorkerTest {
                 LocalTime.of(1, 0),
                 LocalTime.of(10, 0)
         );
-        dimDelay(Duration.ofSeconds(10));
-        dimDuration(Duration.ofSeconds(10));
-
-        now(LocalTime.of(10, 5));
+        setDimDelay(Duration.ofSeconds(10));
+        setDimDuration(Duration.ofSeconds(10));
+        setCurrentTime(LocalTime.of(10, 5));
 
         lampWorker.scheduled();
 
@@ -116,10 +111,9 @@ public class LampWorkerTest {
                 LocalTime.of(1, 0),
                 LocalTime.of(2, 0)
         );
-        dimDelay(Duration.ofSeconds(1));
-        dimDuration(Duration.ofMinutes(100000));
-
-        now(LocalTime.of(2, 0).plusMinutes(1));
+        setDimDelay(Duration.ofSeconds(1));
+        setDimDuration(Duration.ofMinutes(100000));
+        setCurrentTime(LocalTime.of(2, 0).plusMinutes(1));
 
         lampWorker.scheduled();
 
@@ -136,10 +130,9 @@ public class LampWorkerTest {
                 LocalTime.of(1, 0),
                 LocalTime.of(2, 0)
         );
-        dimDelay(Duration.ofSeconds(1));
-        dimDuration(Duration.ofMinutes(100000));
-
-        now(LocalTime.of(2, 0).plusMinutes(99999));
+        setDimDelay(Duration.ofSeconds(1));
+        setDimDuration(Duration.ofMinutes(100000));
+        setCurrentTime(LocalTime.of(2, 0).plusMinutes(99999));
 
         lampWorker.scheduled();
 
@@ -156,10 +149,9 @@ public class LampWorkerTest {
                 LocalTime.of(1, 0),
                 LocalTime.of(10, 0)
         );
-        dimDelay(Duration.ofSeconds(10));
-        dimDuration(Duration.ofSeconds(10));
-
-        now(LocalTime.of(10, 21));
+        setDimDelay(Duration.ofSeconds(10));
+        setDimDuration(Duration.ofSeconds(10));
+        setCurrentTime(LocalTime.of(10, 21));
 
         lampWorker.scheduled();
 
@@ -170,10 +162,6 @@ public class LampWorkerTest {
         ));
     }
 
-    private ArgumentMatcher<Integer> isCloseTo(int value) {
-        return argument -> Math.abs(argument - value) <= 5;
-    }
-
     private void setWakeUpDay(LocalTime start, LocalTime end) {
         when(wakeUpService.getTodayWakeUpDay()).thenReturn(WakeUpDay.builder()
                 .start(start)
@@ -181,15 +169,15 @@ public class LampWorkerTest {
                 .build());
     }
 
-    private void dimDelay(Duration value) {
+    private void setDimDelay(Duration value) {
         when(wakeUpService.getDimDelay()).thenReturn(value);
     }
 
-    private void dimDuration(Duration value) {
+    private void setDimDuration(Duration value) {
         when(wakeUpService.getDimDuration()).thenReturn(value);
     }
 
-    private void now(LocalTime now) {
+    private void setCurrentTime(LocalTime now) {
         when(time.now()).thenReturn(now);
     }
 }

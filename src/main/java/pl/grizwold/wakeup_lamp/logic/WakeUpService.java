@@ -21,6 +21,7 @@ public class WakeUpService {
     }
 
     public WakeUpWeek updateWakeUpWeek(WakeUpWeek wakeUpWeek) {
+        validate(wakeUpWeek);
         return this.wakeUpWeek = wakeUpWeek;
     }
 
@@ -41,5 +42,21 @@ public class WakeUpService {
 
     public Duration getDimDuration() {
         return this.getWakeUpWeek().getDimDuration();
+    }
+
+    private void validate(WakeUpWeek wakeUpWeek) {
+        validate(wakeUpWeek.getWorkDay());
+        validate(wakeUpWeek.getWeekend());
+
+        assertTrue(!wakeUpWeek.getDimDelay().isNegative(), "Dim delay cannot be negative!");
+        assertTrue(!wakeUpWeek.getDimDuration().isNegative(), "Dim duration cannot be negative!");
+    }
+
+    private void validate(WakeUpDay wakeUpDay) {
+        assertTrue(wakeUpDay.getStart().isBefore(wakeUpDay.getEnd()), "Wakeup end cannot be before or equal to wakeup start");
+    }
+
+    private void assertTrue(boolean assertionResult, String assertionFailureMessage) {
+        if(!assertionResult) throw new IllegalArgumentException(assertionFailureMessage);
     }
 }

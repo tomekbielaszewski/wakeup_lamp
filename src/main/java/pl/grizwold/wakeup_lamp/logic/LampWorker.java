@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 import pl.grizwold.wakeup_lamp.model.WakeUpDay;
 
 import java.time.LocalTime;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
 
 import static java.time.temporal.ChronoUnit.SECONDS;
 import static pl.grizwold.wakeup_lamp.logic.RaspberryPi.MAX_PWM_RATE;
@@ -14,6 +17,8 @@ import static pl.grizwold.wakeup_lamp.logic.RaspberryPi.MAX_PWM_RATE;
 @Slf4j
 @Component
 public class LampWorker {
+    private final Map<LampState, Consumer<WakeUpDay>> stateHandlers;
+
     @Autowired
     private WakeUpService wakeUpService;
 
@@ -23,30 +28,53 @@ public class LampWorker {
     @Autowired
     private TimeService time;
 
+    public LampWorker() {
+        this.stateHandlers = new HashMap<>();
+        this.stateHandlers.put(LampState.OFF, this::shutDown);
+        this.stateHandlers.put(LampState.LIGHTNING_UP, this::lightUp);
+        this.stateHandlers.put(LampState.ON, this::turnOn);
+        this.stateHandlers.put(LampState.DIMMING, this::dim);
+    }
+
     @Scheduled(fixedRate = 1000)
-    public void scheduled() {
+    public void processLampState() {
         WakeUpDay todayWakeUp = wakeUpService.getTodayWakeUpDay();
-
-        whenMorningComes(todayWakeUp);
-        whenMorningEnds(todayWakeUp);
+        LampState state = getState(todayWakeUp);
+        stateHandlers.get(state).accept(todayWakeUp);
     }
 
-    private void whenMorningComes(WakeUpDay todayWakeUp) {
-        LocalTime wakeUpStart = todayWakeUp.getStart();
-        LocalTime wakeUpEnd = todayWakeUp.getEnd();
+    private LampState getState(WakeUpDay wakeUpDay) {
+        LampState state = LampState.OFF;
+        LocalTime start = wakeUpDay.getStart();
+        LocalTime end = wakeUpDay.getEnd();
+        LocalTime dimStart = getDimStart(wakeUpDay);
+        LocalTime dimEnd = getDimEnd(wakeUpDay);
 
-        if (isBetween(wakeUpStart, wakeUpEnd)) {
-            smoothlyLightUpLamp(wakeUpStart, wakeUpEnd);
-        }
+        if (isBetween(start, end)) state = LampState.LIGHTNING_UP;
+        if (isBetween(end, dimStart)) state = LampState.ON;
+        if (isBetween(dimStart, dimEnd)) state = LampState.DIMMING;
+
+        return state;
     }
 
-    private void whenMorningEnds(WakeUpDay todayWakeUp) {
-        LocalTime dimStart = getDimStart(todayWakeUp);
-        LocalTime dimStop = getDimStop(todayWakeUp);
+    private void shutDown(WakeUpDay wakeUpDay) {
+        raspberryPi.setPWM(0);
+    }
 
-        if (isBetween(dimStart, dimStop)) {
-            smoothlyDimLamp(dimStart, dimStop);
-        }
+    private void lightUp(WakeUpDay wakeUpDay) {
+        LocalTime start = wakeUpDay.getStart();
+        LocalTime end = wakeUpDay.getEnd();
+        smoothlyLightUpLamp(start, end);
+    }
+
+    private void turnOn(WakeUpDay wakeUpDay) {
+        raspberryPi.setPWM(MAX_PWM_RATE);
+    }
+
+    private void dim(WakeUpDay wakeUpDay) {
+        LocalTime dimStart = getDimStart(wakeUpDay);
+        LocalTime dimEnd = getDimEnd(wakeUpDay);
+        smoothlyDimLamp(dimStart, dimEnd);
     }
 
     private void smoothlyLightUpLamp(LocalTime start, LocalTime end) {
@@ -70,7 +98,7 @@ public class LampWorker {
         return (int) (((float) secondsElapsed / (float) secondsInTotal) * MAX_PWM_RATE);
     }
 
-    private LocalTime getDimStop(WakeUpDay todayWakeUp) {
+    private LocalTime getDimEnd(WakeUpDay todayWakeUp) {
         return this.getDimStart(todayWakeUp).plus(wakeUpService.getDimDuration());
     }
 
@@ -83,5 +111,12 @@ public class LampWorker {
         return now.compareTo(start) == 0 ||
                 (now.isAfter(start) &&
                         now.isBefore(end));
+    }
+
+    private enum LampState {
+        OFF,
+        LIGHTNING_UP,
+        ON,
+        DIMMING
     }
 }

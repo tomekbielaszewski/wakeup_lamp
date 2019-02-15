@@ -35,11 +35,11 @@ public class LampWorkerTest {
                 LocalTime.of(1, 0),
                 LocalTime.of(10, 0)
         );
-        setDimDelay(Duration.ofSeconds(1));
-        setDimDuration(Duration.ofSeconds(1));
+        setDimDelay(Duration.ofMinutes(10));
+        setDimDuration(Duration.ofMinutes(10));
         setCurrentTime(LocalTime.of(0, 59));
 
-        lampWorker.scheduled();
+        lampWorker.processLampState();
 
         verify(raspberryPi).setPWM(argThat(pwm -> {
                     assertThat(pwm, closeTo(0, 5));
@@ -54,11 +54,11 @@ public class LampWorkerTest {
                 LocalTime.of(1, 0),
                 LocalTime.of(10, 0)
         );
-        setDimDelay(Duration.ofSeconds(10));
-        setDimDuration(Duration.ofSeconds(10));
+        setDimDelay(Duration.ofMinutes(10));
+        setDimDuration(Duration.ofMinutes(10));
         setCurrentTime(LocalTime.of(1, 1));
 
-        lampWorker.scheduled();
+        lampWorker.processLampState();
 
         verify(raspberryPi).setPWM(argThat(pwm -> {
                     assertThat(pwm, closeTo(0, 5));
@@ -73,11 +73,11 @@ public class LampWorkerTest {
                 LocalTime.of(1, 0),
                 LocalTime.of(10, 0)
         );
-        setDimDelay(Duration.ofSeconds(10));
-        setDimDuration(Duration.ofSeconds(10));
+        setDimDelay(Duration.ofMinutes(10));
+        setDimDuration(Duration.ofMinutes(10));
         setCurrentTime(LocalTime.of(9, 59));
 
-        lampWorker.scheduled();
+        lampWorker.processLampState();
 
         verify(raspberryPi).setPWM(argThat(pwm -> {
                     assertThat(pwm, closeTo(MAX_PWM_RATE, 5));
@@ -92,11 +92,11 @@ public class LampWorkerTest {
                 LocalTime.of(1, 0),
                 LocalTime.of(10, 0)
         );
-        setDimDelay(Duration.ofSeconds(10));
-        setDimDuration(Duration.ofSeconds(10));
+        setDimDelay(Duration.ofMinutes(10));
+        setDimDuration(Duration.ofMinutes(10));
         setCurrentTime(LocalTime.of(10, 5));
 
-        lampWorker.scheduled();
+        lampWorker.processLampState();
 
         verify(raspberryPi).setPWM(argThat(pwm -> {
                     assertThat(pwm, closeTo(MAX_PWM_RATE, 5));
@@ -109,13 +109,13 @@ public class LampWorkerTest {
     public void lamp_is_still_close_to_max_light_when_started_dimming() {
         setWakeUpDay(
                 LocalTime.of(1, 0),
-                LocalTime.of(2, 0)
+                LocalTime.of(10, 0)
         );
-        setDimDelay(Duration.ofSeconds(1));
-        setDimDuration(Duration.ofMinutes(100000));
-        setCurrentTime(LocalTime.of(2, 0).plusMinutes(1));
+        setDimDelay(Duration.ofMinutes(10));
+        setDimDuration(Duration.ofMinutes(10));
+        setCurrentTime(LocalTime.of(10, 10).plusSeconds(1));
 
-        lampWorker.scheduled();
+        lampWorker.processLampState();
 
         verify(raspberryPi).setPWM(argThat(pwm -> {
                     assertThat(pwm, closeTo(MAX_PWM_RATE, 5));
@@ -128,13 +128,13 @@ public class LampWorkerTest {
     public void lamp_is_close_to_shut_down_at_the_end_of_dimming() {
         setWakeUpDay(
                 LocalTime.of(1, 0),
-                LocalTime.of(2, 0)
+                LocalTime.of(10, 0)
         );
-        setDimDelay(Duration.ofSeconds(1));
-        setDimDuration(Duration.ofMinutes(100000));
-        setCurrentTime(LocalTime.of(2, 0).plusMinutes(99999));
+        setDimDelay(Duration.ofMinutes(10));
+        setDimDuration(Duration.ofMinutes(10));
+        setCurrentTime(LocalTime.of(10, 20).minusSeconds(1));
 
-        lampWorker.scheduled();
+        lampWorker.processLampState();
 
         verify(raspberryPi).setPWM(argThat(pwm -> {
                     assertThat(pwm, closeTo(0, 5));
@@ -153,7 +153,7 @@ public class LampWorkerTest {
         setDimDuration(Duration.ofSeconds(10));
         setCurrentTime(LocalTime.of(10, 21));
 
-        lampWorker.scheduled();
+        lampWorker.processLampState();
 
         verify(raspberryPi).setPWM(argThat(pwm -> {
                     assertThat(pwm, closeTo(0, 5));

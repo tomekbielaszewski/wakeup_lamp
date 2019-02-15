@@ -1,9 +1,6 @@
 package pl.grizwold.wakeup_lamp.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.Duration;
 
@@ -11,6 +8,7 @@ import java.time.Duration;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 public class WakeUpWeek {
     private WakeUpDay workDay;
     private WakeUpDay weekend;

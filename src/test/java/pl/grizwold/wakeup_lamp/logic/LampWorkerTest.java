@@ -11,8 +11,10 @@ import pl.grizwold.wakeup_lamp.model.WakeUpDay;
 import java.time.Duration;
 import java.time.LocalTime;
 
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 import static pl.grizwold.wakeup_lamp.logic.RaspberryPi.MAX_PWM_RATE;
+import static pl.grizwold.wakeup_lamp.matchers.IsCloseToInteger.closeTo;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LampWorkerTest {
@@ -41,7 +43,11 @@ public class LampWorkerTest {
 
         lampWorker.scheduled();
 
-        verify(raspberryPi).setPWM(argThat(isCloseTo(MAX_PWM_RATE)));
+        verify(raspberryPi).setPWM(argThat(pwm -> {
+                    assertThat(pwm, closeTo(MAX_PWM_RATE, 5));
+                    return true;
+                }
+        ));
     }
 
     @Test
@@ -57,7 +63,11 @@ public class LampWorkerTest {
 
         lampWorker.scheduled();
 
-        verify(raspberryPi).setPWM(argThat(isCloseTo(0)));
+        verify(raspberryPi).setPWM(argThat(pwm -> {
+                    assertThat(pwm, closeTo(0, 5));
+                    return true;
+                }
+        ));
     }
 
     @Test
@@ -73,7 +83,11 @@ public class LampWorkerTest {
 
         lampWorker.scheduled();
 
-        verify(raspberryPi).setPWM(argThat(isCloseTo(MAX_PWM_RATE)));
+        verify(raspberryPi).setPWM(argThat(pwm -> {
+                    assertThat(pwm, closeTo(MAX_PWM_RATE, 5));
+                    return true;
+                }
+        ));
     }
 
     @Test
@@ -89,7 +103,11 @@ public class LampWorkerTest {
 
         lampWorker.scheduled();
 
-        verify(raspberryPi).setPWM(argThat(isCloseTo(0)));
+        verify(raspberryPi).setPWM(argThat(pwm -> {
+                    assertThat(pwm, closeTo(0, 5));
+                    return true;
+                }
+        ));
     }
 
     @Test
@@ -105,7 +123,11 @@ public class LampWorkerTest {
 
         lampWorker.scheduled();
 
-        verify(raspberryPi).setPWM(argThat(isCloseTo(0)));
+        verify(raspberryPi).setPWM(argThat(pwm -> {
+                    assertThat(pwm, closeTo(0, 5));
+                    return true;
+                }
+        ));
     }
 
     @Test
@@ -121,7 +143,11 @@ public class LampWorkerTest {
 
         lampWorker.scheduled();
 
-        verify(raspberryPi).setPWM(argThat(isCloseTo(MAX_PWM_RATE)));
+        verify(raspberryPi).setPWM(argThat(pwm -> {
+                    assertThat(pwm, closeTo(MAX_PWM_RATE, 5));
+                    return true;
+                }
+        ));
     }
 
     @Test
@@ -137,7 +163,11 @@ public class LampWorkerTest {
 
         lampWorker.scheduled();
 
-        verify(raspberryPi).setPWM(argThat(isCloseTo(0)));
+        verify(raspberryPi).setPWM(argThat(pwm -> {
+                    assertThat(pwm, closeTo(0, 5));
+                    return true;
+                }
+        ));
     }
 
     private ArgumentMatcher<Integer> isCloseTo(int value) {
